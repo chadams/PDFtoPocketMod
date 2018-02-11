@@ -39,11 +39,11 @@ class PocketModConverter {
     this.resizePercentWidth = this.pmSize.width / this.sourceSize.width;
     this.resizePercentHeight = this.pmSize.height / this.sourceSize.height;
 
-    console.log("outSize", this.outSize);
-    console.log("sourceSize", this.sourceSize);
-    console.log("pmSize", this.pmSize);
-    console.log("resizePercentWidth", this.resizePercentWidth);
-    console.log("resizePercentHeight", this.resizePercentHeight);
+    // console.log("outSize", this.outSize);
+    // console.log("sourceSize", this.sourceSize);
+    // console.log("pmSize", this.pmSize);
+    // console.log("resizePercentWidth", this.resizePercentWidth);
+    // console.log("resizePercentHeight", this.resizePercentHeight);
 
     const contentContext = pdfWriter.startPageContentContext(page);
 
@@ -57,7 +57,7 @@ class PocketModConverter {
     // const looper = _.range(0, maxPages);
     // looper.forEach(function(i) {});
 
-    const positions = [1, 2, 3, 4, 5, 6, 7, 8];
+    const positions = [2, 3, 4, 8, 7, 6, 5, 1];
 
     positions.forEach((id, index) => {
       const pageFormID = formIDs[index];
