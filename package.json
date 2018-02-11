@@ -1,0 +1,27 @@
+{
+  "name": "pdftopm",
+  "version": "0.0.1",
+  "description": "PDF to PocketMod Converter",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chadams/PDFtoPocketMod.git"
+  },
+  "author": "Chad Adams <chadams@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chadams/PDFtoPocketMod/issues"
+  },
+  "homepage": "https://github.com/chadams/PDFtoPocketMod#readme",
+  "dependencies": {
+    "hummus": "1.0.83",
+    "lodash": "4.17.5",
+    "rematrix": "0.2.2",
+    "transformation-matrix-js": "2.7.1",
+    "transformatrix": "1.1.1"
+  }
+}
