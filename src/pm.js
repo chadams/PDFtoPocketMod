@@ -4,13 +4,15 @@ const hummus = require("hummus");
 const Matrix = require("transformation-matrix-js").Matrix;
 const _ = require("lodash");
 
-const pageWidth = 595;
-const pageHeight = 842;
+const pageWidth = 612;
+const pageHeight = 792;
 
 const defaultOptions = {
   width: pageWidth,
   height: pageHeight
 };
+
+const SCALE_ADJUST = 0;
 
 class PocketModConverter {
   constructor(options) {
@@ -28,6 +30,7 @@ class PocketModConverter {
     // Here is you issue, the mediabox is not the same as cropbox
     // console.log(firstPageInfo.getMediaBox());
     // console.log(firstPageInfo.getCropBox());
+    // console.log(firstPageInfo.getTrimBox());
 
     const pdfWriter = hummus.createWriter(destPath);
     const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
@@ -39,6 +42,9 @@ class PocketModConverter {
     this.resizePercentWidth = this.pmSize.width / this.sourceSize.width;
     this.resizePercentHeight = this.pmSize.height / this.sourceSize.height;
 
+    this.resizePercentWidth = this.resizePercentWidth - this.resizePercentWidth * SCALE_ADJUST;
+    this.resizePercentHeight = this.resizePercentHeight - this.resizePercentHeight * SCALE_ADJUST;
+
     // console.log("outSize", this.outSize);
     // console.log("sourceSize", this.sourceSize);
     // console.log("pmSize", this.pmSize);
@@ -49,10 +55,7 @@ class PocketModConverter {
 
     // you may switch between the following viewbox to see the result
     // ePDFPageBoxMediaBox, ePDFPageBoxCropBox, ePDFPageBoxBleedBox, ePDFPageBoxTrimBox, ePDFPageBoxArtBox
-    const formIDs = pdfWriter.createFormXObjectsFromPDF(
-      sourcePath,
-      hummus.ePDFPageBoxCropBox
-    );
+    const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, hummus.ePDFPageBoxCropBox);
 
     // const looper = _.range(0, maxPages);
     // looper.forEach(function(i) {});
@@ -69,9 +72,7 @@ class PocketModConverter {
           .cm.apply(contentContext, m.toArray())
           // use the xobject
           // https://github.com/galkahana/HummusJS/wiki/Embedding-pdf#create-form-xobjects-from-source-pages
-          .doXObject(
-            page.getResourcesDictionary().addFormXObjectMapping(pageFormID)
-          )
+          .doXObject(page.getResourcesDictionary().addFormXObjectMapping(pageFormID))
           .Q();
       }
     });
@@ -89,51 +90,51 @@ class PocketModConverter {
     var m = new Matrix();
     switch (positionID) {
       case 1: // B
-        m.translate(0, this.pmSize.width * 4);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(0, this.outSize.width * 4);
         m.rotateDeg(-90);
         break;
       case 2: // F
-        m.translate(0, this.pmSize.width * 3);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(0, this.outSize.width * 3);
         m.rotateDeg(-90);
         break;
       case 3: // 1
-        m.translate(0, this.pmSize.width * 2);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(0, this.outSize.width * 2);
         m.rotateDeg(-90);
         break;
       case 4: // 2
-        m.translate(0, this.pmSize.width * 1);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(0, this.outSize.width * 1);
         m.rotateDeg(-90);
         break;
       case 5: // 6
-        m.translate(this.pmSize.height * 2, this.pmSize.width * 3);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(this.outSize.height * 2, this.outSize.width * 3);
         m.rotateDeg(90);
         break;
       case 6: // 5
-        m.translate(this.pmSize.height * 2, this.pmSize.width * 2);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(this.outSize.height * 2, this.outSize.width * 2);
         m.rotateDeg(90);
         break;
       case 7: // 4
-        m.translate(this.pmSize.height * 2, this.pmSize.width * 1);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(this.outSize.height * 2, this.outSize.width * 1);
         m.rotateDeg(90);
         break;
       case 8: // 3
-        m.translate(this.pmSize.height * 2, this.pmSize.width * 0);
-        m.scaleX(this.resizePercentWidth);
-        m.scaleY(this.resizePercentHeight);
+        m.scaleX(this.resizePercentHeight);
+        m.scaleY(this.resizePercentWidth);
+        m.translate(this.outSize.height * 2, this.outSize.width * 0);
         m.rotateDeg(90);
         break;
 
