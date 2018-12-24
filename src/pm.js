@@ -4,12 +4,19 @@ const hummus = require("hummus");
 const Matrix = require("transformation-matrix-js").Matrix;
 const _ = require("lodash");
 
-const pageWidth = 612;
-const pageHeight = 792;
+const pageSizes = {
+  letter: {
+    pageWidth: 612,
+    pageHeight: 792
+  },
+  A4: {
+    pageWidth: 595,
+    pageHeight: 842
+  }
+};
 
 const defaultOptions = {
-  width: pageWidth,
-  height: pageHeight
+  size: "letter"
 };
 
 const SCALE_ADJUST = 0;
@@ -17,6 +24,8 @@ const SCALE_ADJUST = 0;
 class PocketModConverter {
   constructor(options) {
     this.options = _.extend({}, defaultOptions, options);
+    this.options.width = pageSizes[this.options.size].pageWidth;
+    this.options.height = pageSizes[this.options.size].pageHeight;
   }
 
   convert(sourcePath, destPath) {
