@@ -24,7 +24,7 @@ const SCALE_ADJUST = 0;
 class PocketModConverter {
   constructor(options) {
     this.options = _.extend({}, defaultOptions, options);
-    const size = pageSizes[this.options.size] ? this.options.size : defaultOptions.size
+    const size = pageSizes[this.options.size] ? this.options.size : defaultOptions.size;
     this.options.width = pageSizes[size].pageWidth;
     this.options.height = pageSizes[size].pageHeight;
   }
