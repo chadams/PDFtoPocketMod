@@ -18,10 +18,10 @@
   },
   "homepage": "https://github.com/chadams/PDFtoPocketMod#readme",
   "dependencies": {
-    "hummus": "1.0.83",
-    "lodash": "4.17.5",
-    "rematrix": "0.2.2",
-    "transformation-matrix-js": "2.7.1",
+    "hummus": "1.0.95",
+    "lodash": "4.17.11",
+    "rematrix": "0.3.0",
+    "transformation-matrix-js": "2.7.6",
     "transformatrix": "1.1.1"
   }
 }

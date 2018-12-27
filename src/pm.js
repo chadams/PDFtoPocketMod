@@ -19,7 +19,7 @@ const defaultOptions = {
   size: "letter"
 };
 
-const SCALE_ADJUST = 0;
+const SCALE_ADJUST = 1;
 
 class PocketModConverter {
   constructor(options) {
@@ -46,26 +46,26 @@ class PocketModConverter {
     const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
     this.outSize = getSizeOfArea([0, 0, pageWidth, pageHeight]);
-    this.sourceSize = getSizeOfArea(firstPageInfo.getTrimBox());
+    this.sourceSize = getSizeOfArea(firstPageInfo.getCropBox());
     this.pmSize = getSizeOfArea([0, 0, pageHeight / 4, pageWidth / 2]);
 
     this.resizePercentWidth = this.pmSize.width / this.sourceSize.width;
     this.resizePercentHeight = this.pmSize.height / this.sourceSize.height;
 
-    // this.resizePercentWidth = this.resizePercentWidth - this.resizePercentWidth * SCALE_ADJUST;
-    // this.resizePercentHeight = this.resizePercentHeight - this.resizePercentHeight * SCALE_ADJUST;
+    this.resizePercentWidth = this.resizePercentWidth * SCALE_ADJUST;
+    this.resizePercentHeight = this.resizePercentHeight * SCALE_ADJUST;
 
-    // console.log("outSize", this.outSize);
-    // console.log("sourceSize", this.sourceSize);
-    // console.log("pmSize", this.pmSize);
-    // console.log("resizePercentWidth", this.resizePercentWidth);
-    // console.log("resizePercentHeight", this.resizePercentHeight);
+    console.log("outSize", this.outSize);
+    console.log("sourceSize", this.sourceSize);
+    console.log("pmSize", this.pmSize);
+    console.log("resizePercentWidth", this.resizePercentWidth);
+    console.log("resizePercentHeight", this.resizePercentHeight);
 
     const contentContext = pdfWriter.startPageContentContext(page);
 
     // you may switch between the following viewbox to see the result
     // ePDFPageBoxMediaBox, ePDFPageBoxCropBox, ePDFPageBoxBleedBox, ePDFPageBoxTrimBox, ePDFPageBoxArtBox
-    const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, hummus.ePDFPageBoxTrimBox);
+    const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, hummus.ePDFPageBoxCropBox);
 
     // const looper = _.range(0, maxPages);
     // looper.forEach(function(i) {});
