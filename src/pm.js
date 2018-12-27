@@ -46,20 +46,26 @@ class PocketModConverter {
     const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
     this.outSize = getSizeOfArea([0, 0, pageWidth, pageHeight]);
-    this.sourceSize = getSizeOfArea(firstPageInfo.getCropBox());
+    this.sourceSize = getSizeOfArea(firstPageInfo.getBleedBox());
     this.pmSize = getSizeOfArea([0, 0, pageHeight / 4, pageWidth / 2]);
+
+    this.resizePercentWidthFull = this.outSize.width / this.sourceSize.width;
+    this.resizePercentHeightFull = this.outSize.height / this.sourceSize.height;
 
     this.resizePercentWidth = this.pmSize.width / this.sourceSize.width;
     this.resizePercentHeight = this.pmSize.height / this.sourceSize.height;
 
-    this.resizePercentWidth = this.resizePercentWidth * SCALE_ADJUST;
-    this.resizePercentHeight = this.resizePercentHeight * SCALE_ADJUST;
+    // this.resizePercentWidth = this.resizePercentWidth * SCALE_ADJUST;
+    // this.resizePercentHeight = this.resizePercentHeight * SCALE_ADJUST;
 
-    console.log("outSize", this.outSize);
-    console.log("sourceSize", this.sourceSize);
-    console.log("pmSize", this.pmSize);
-    console.log("resizePercentWidth", this.resizePercentWidth);
-    console.log("resizePercentHeight", this.resizePercentHeight);
+    // console.log("outSize", this.outSize);
+    // console.log("sourceSize", this.sourceSize);
+    // console.log("pmSize", this.pmSize);
+    // console.log("resizePercentWidthFull", this.resizePercentWidthFull);
+    // console.log("resizePercentHeightFull", this.resizePercentHeightFull);
+    // console.log("resizePercentWidth", this.resizePercentWidth);
+    // console.log("resizePercentHeight", this.resizePercentHeight);
+    // console.log("------------------------");
 
     const contentContext = pdfWriter.startPageContentContext(page);
 
@@ -108,48 +114,64 @@ standard
     switch (positionID) {
       case 1: // B
         m.translate(0, sizes.pmSize.width * 4);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(-90);
         break;
       case 2: // F
         m.translate(0, sizes.pmSize.width * 3);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(-90);
         break;
       case 3: // 1
         m.translate(0, sizes.pmSize.width * 2);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(-90);
         break;
       case 4: // 2
         m.translate(0, sizes.pmSize.width * 1);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(-90);
         break;
       case 5: // 6
         m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 3);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(90);
         break;
       case 6: // 5
         m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 2);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(90);
         break;
       case 7: // 4
         m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 1);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(90);
         break;
       case 8: // 3
         m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 0);
+        m.scaleX(sizes.resizePercentWidthFull);
+        m.scaleY(sizes.resizePercentHeightFull);
         m.scaleX(sizes.resizePercentWidth);
         m.scaleY(sizes.resizePercentHeight);
         m.rotateDeg(90);
