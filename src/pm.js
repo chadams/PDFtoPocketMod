@@ -46,7 +46,7 @@ class PocketModConverter {
     const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
     this.outSize = getSizeOfArea([0, 0, pageWidth, pageHeight]);
-    this.sourceSize = getSizeOfArea(firstPageInfo.getBleedBox());
+    this.sourceSize = getSizeOfArea(firstPageInfo.getMediaBox());
     this.pmSize = getSizeOfArea([0, 0, pageHeight / 4, pageWidth / 2]);
 
     this.resizePercentWidthFull = this.outSize.width / this.sourceSize.width;
@@ -71,12 +71,12 @@ class PocketModConverter {
 
     // you may switch between the following viewbox to see the result
     // ePDFPageBoxMediaBox, ePDFPageBoxCropBox, ePDFPageBoxBleedBox, ePDFPageBoxTrimBox, ePDFPageBoxArtBox
-    const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, hummus.ePDFPageBoxCropBox);
+    const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, [0, 0, pageWidth, pageHeight]);
 
     // const looper = _.range(0, maxPages);
     // looper.forEach(function(i) {});
 
-    const positions = [2, 3, 4, 8, 7, 6, 5, 1];
+    const positions = [1, 2, 3, 4, 5, 6, 7, 8];
 
     positions.forEach((id, index) => {
       const pageFormID = formIDs[index];
@@ -85,6 +85,15 @@ class PocketModConverter {
         const m = this.getMatrixForPosition(id);
         contentContext
           .q()
+
+          // .w(2)
+          // .K(0, 1, 0, 0)
+
+          // .m(0, 0)
+          // .l(this.sourceSize.width, 0)
+          // .l(this.sourceSize.width, this.sourceSize.height)
+          // .l(0, this.sourceSize.height)
+          // .s()
           .cm.apply(contentContext, m.toArray())
           // use the xobject
           // https://github.com/galkahana/HummusJS/wiki/Embedding-pdf#create-form-xobjects-from-source-pages
@@ -97,83 +106,60 @@ class PocketModConverter {
   }
 
   /*
-1.B  |  5.6
-2.F  |  6.5
-3.1  |  7.4
-4.2  |  8.3
----------------
-standard
-1.1>  |  5.F<
-2.2>  |  6.B<
-3.3>  |  7.6<
-4.4>  |  8.5<
+folds on top
+-------------------
+
 */
   getMatrixForPosition(positionID) {
     const sizes = this;
     var m = new Matrix();
     switch (positionID) {
-      case 1: // B
-        m.translate(0, sizes.pmSize.width * 4);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
-        m.rotateDeg(-90);
-        break;
-      case 2: // F
-        m.translate(0, sizes.pmSize.width * 3);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
-        m.rotateDeg(-90);
-        break;
-      case 3: // 1
-        m.translate(0, sizes.pmSize.width * 2);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
-        m.rotateDeg(-90);
-        break;
-      case 4: // 2
-        m.translate(0, sizes.pmSize.width * 1);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
-        m.rotateDeg(-90);
-        break;
-      case 5: // 6
-        m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 3);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
+      case 1:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(sizes.sourceSize.height * 2, sizes.sourceSize.width * 3);
         m.rotateDeg(90);
         break;
-      case 6: // 5
-        m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 2);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
+      case 2:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(0, sizes.sourceSize.width * 4);
+        m.rotateDeg(-90);
+        break;
+      case 3:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(0, sizes.sourceSize.width * 3);
+        m.rotateDeg(-90);
+        break;
+      case 4:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(0, sizes.sourceSize.width * 2);
+        m.rotateDeg(-90);
+        break;
+      case 5:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(0, sizes.sourceSize.width * 1);
+        m.rotateDeg(-90);
+        break;
+      case 6:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(sizes.sourceSize.height * 2, sizes.sourceSize.width * 0);
         m.rotateDeg(90);
         break;
-      case 7: // 4
-        m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 1);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
+      case 7:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(sizes.sourceSize.height * 2, sizes.sourceSize.width * 1);
         m.rotateDeg(90);
         break;
-      case 8: // 3
-        m.translate(sizes.pmSize.height * 2, sizes.pmSize.width * 0);
-        m.scaleX(sizes.resizePercentWidthFull);
-        m.scaleY(sizes.resizePercentHeightFull);
-        m.scaleX(sizes.resizePercentWidth);
-        m.scaleY(sizes.resizePercentHeight);
+      case 8:
+        m.scaleX(sizes.resizePercentHeight);
+        m.scaleY(sizes.resizePercentWidth);
+        m.translate(sizes.sourceSize.height * 2, sizes.sourceSize.width * 2);
         m.rotateDeg(90);
         break;
 
