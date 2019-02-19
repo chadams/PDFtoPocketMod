@@ -36,73 +36,78 @@ class PocketModConverter {
     const pdfReader = hummus.createReader(sourcePath);
     const srcPageCount = pdfReader.getPagesCount();
     const firstPageInfo = pdfReader.parsePage(0);
-    const maxPages = Math.min(srcPageCount, 8);
+    const maxPages = srcPageCount; //Math.min(srcPageCount, 8);
     // Here is you issue, the mediabox is not the same as cropbox
     // console.log(firstPageInfo.getMediaBox());
     // console.log(firstPageInfo.getCropBox());
     // console.log(firstPageInfo.getTrimBox());
 
     const pdfWriter = hummus.createWriter(destPath);
-    const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
-    this.outSize = getSizeOfArea([0, 0, pageWidth, pageHeight]);
-    this.sourceSize = getSizeOfArea(firstPageInfo.getMediaBox());
-    this.pmSize = getSizeOfArea([0, 0, pageHeight / 4, pageWidth / 2]);
+    _.times(Math.ceil(maxPages / 8), pageIndex => {
+      const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
-    this.resizePercentWidthFull = this.outSize.width / this.sourceSize.width;
-    this.resizePercentHeightFull = this.outSize.height / this.sourceSize.height;
+      this.outSize = getSizeOfArea([0, 0, pageWidth, pageHeight]);
+      this.sourceSize = getSizeOfArea(firstPageInfo.getMediaBox());
+      this.pmSize = getSizeOfArea([0, 0, pageHeight / 4, pageWidth / 2]);
 
-    this.resizePercentWidth = this.pmSize.width / this.sourceSize.width;
-    this.resizePercentHeight = this.pmSize.height / this.sourceSize.height;
+      this.resizePercentWidthFull = this.outSize.width / this.sourceSize.width;
+      this.resizePercentHeightFull = this.outSize.height / this.sourceSize.height;
 
-    // this.resizePercentWidth = this.resizePercentWidth * SCALE_ADJUST;
-    // this.resizePercentHeight = this.resizePercentHeight * SCALE_ADJUST;
+      this.resizePercentWidth = this.pmSize.width / this.sourceSize.width;
+      this.resizePercentHeight = this.pmSize.height / this.sourceSize.height;
 
-    // console.log("outSize", this.outSize);
-    // console.log("sourceSize", this.sourceSize);
-    // console.log("pmSize", this.pmSize);
-    // console.log("resizePercentWidthFull", this.resizePercentWidthFull);
-    // console.log("resizePercentHeightFull", this.resizePercentHeightFull);
-    // console.log("resizePercentWidth", this.resizePercentWidth);
-    // console.log("resizePercentHeight", this.resizePercentHeight);
-    // console.log("------------------------");
+      // this.resizePercentWidth = this.resizePercentWidth * SCALE_ADJUST;
+      // this.resizePercentHeight = this.resizePercentHeight * SCALE_ADJUST;
 
-    const contentContext = pdfWriter.startPageContentContext(page);
+      // console.log("outSize", this.outSize);
+      // console.log("sourceSize", this.sourceSize);
+      // console.log("pmSize", this.pmSize);
+      // console.log("resizePercentWidthFull", this.resizePercentWidthFull);
+      // console.log("resizePercentHeightFull", this.resizePercentHeightFull);
+      // console.log("resizePercentWidth", this.resizePercentWidth);
+      // console.log("resizePercentHeight", this.resizePercentHeight);
+      // console.log("------------------------");
 
-    // you may switch between the following viewbox to see the result
-    // ePDFPageBoxMediaBox, ePDFPageBoxCropBox, ePDFPageBoxBleedBox, ePDFPageBoxTrimBox, ePDFPageBoxArtBox
-    const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, [0, 0, pageWidth, pageHeight]);
+      const contentContext = pdfWriter.startPageContentContext(page);
 
-    // const looper = _.range(0, maxPages);
-    // looper.forEach(function(i) {});
+      // you may switch between the following viewbox to see the result
+      // ePDFPageBoxMediaBox, ePDFPageBoxCropBox, ePDFPageBoxBleedBox, ePDFPageBoxTrimBox, ePDFPageBoxArtBox
+      const formIDs = pdfWriter.createFormXObjectsFromPDF(sourcePath, [0, 0, pageWidth, pageHeight]);
 
-    const positions = [1, 2, 3, 4, 5, 6, 7, 8];
+      // const looper = _.range(0, maxPages);
+      // looper.forEach(function(i) {});
 
-    positions.forEach((id, index) => {
-      const pageFormID = formIDs[index];
+      const positions = [1, 2, 3, 4, 5, 6, 7, 8];
 
-      if (pageFormID) {
-        const m = this.getMatrixForPosition(id);
-        contentContext
-          .q()
+      positions.forEach((id, index) => {
+        const pageFormID = formIDs[pageIndex + 1];
 
-          // .w(2)
-          // .K(0, 1, 0, 0)
+        if (pageFormID) {
+          const m = this.getMatrixForPosition(id);
+          contentContext
+            .q()
 
-          // .m(0, 0)
-          // .l(this.sourceSize.width, 0)
-          // .l(this.sourceSize.width, this.sourceSize.height)
-          // .l(0, this.sourceSize.height)
-          // .s()
-          .cm.apply(contentContext, m.toArray())
-          // use the xobject
-          // https://github.com/galkahana/HummusJS/wiki/Embedding-pdf#create-form-xobjects-from-source-pages
-          .doXObject(page.getResourcesDictionary().addFormXObjectMapping(pageFormID))
-          .Q();
-      }
+            // .w(2)
+            // .K(0, 1, 0, 0)
+
+            // .m(0, 0)
+            // .l(this.sourceSize.width, 0)
+            // .l(this.sourceSize.width, this.sourceSize.height)
+            // .l(0, this.sourceSize.height)
+            // .s()
+            .cm.apply(contentContext, m.toArray())
+            // use the xobject
+            // https://github.com/galkahana/HummusJS/wiki/Embedding-pdf#create-form-xobjects-from-source-pages
+            .doXObject(page.getResourcesDictionary().addFormXObjectMapping(pageFormID))
+            .Q();
+        }
+      });
+
+      pdfWriter.writePage(page);
     });
 
-    pdfWriter.writePage(page).end();
+    pdfWriter.end();
   }
 
   /*
