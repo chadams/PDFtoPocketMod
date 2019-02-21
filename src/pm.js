@@ -44,6 +44,7 @@ class PocketModConverter {
 
     const pdfWriter = hummus.createWriter(destPath);
 
+    let pageNumber = 1;
     _.times(Math.ceil(maxPages / 8), pageIndex => {
       const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
@@ -81,8 +82,8 @@ class PocketModConverter {
       const positions = [1, 2, 3, 4, 5, 6, 7, 8];
 
       positions.forEach((id, index) => {
-        const pageFormID = formIDs[pageIndex + 1];
-
+        const pageFormID = formIDs[pageNumber];
+        pageNumber++;
         if (pageFormID) {
           const m = this.getMatrixForPosition(id);
           contentContext
