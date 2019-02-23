@@ -44,7 +44,7 @@ class PocketModConverter {
 
     const pdfWriter = hummus.createWriter(destPath);
 
-    let pageNumber = 1;
+    let pageNumber = 0;
     _.times(Math.ceil(maxPages / 8), pageIndex => {
       const page = pdfWriter.createPage(0, 0, pageWidth, pageHeight);
 
